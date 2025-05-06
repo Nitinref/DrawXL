@@ -11,10 +11,8 @@ export default function Home(){
   return (
     <div style={{height:"100vh" , width:"100vw" , background:"black" , display:"flex"  , justifyContent:"center",justifyItems:"center"}}>
          <div style={{display:"flex" , justifyContent:"center", flexDirection:"column"}}>
-       
-        <TextInput onChange={()=>{
-
-        }}  placeholder="end the room" ></TextInput>
+        
+        <TextInput   placeholder="end the room" size="big"></TextInput>
         <button style={{padding:"10px" , fontSize:"10px" ,border:"2px . solid , black" , borderRadius:"24px" }}  onClick={()=>{
           router.push("/chat/123")
         }}>Join us</button>
