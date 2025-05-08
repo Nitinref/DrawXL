@@ -33,5 +33,7 @@ app.post("/signin" , function(req,res){
 app.post("/room"  ,middleware, function(req ,res ){
  
     //middleware logic should be written before using it 
-
+   res.json({
+    roomId:"4001"
+   })
 })
