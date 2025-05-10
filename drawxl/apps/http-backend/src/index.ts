@@ -1,14 +1,21 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import z from "zod";
-import { JWT_SECRET } from "./config";
+import { JWT_SECRET } from "@repo/backend-common/config";
 import middleware from "./middleware";
+import {CreateUserSchema , SigninSchema , CreateRoomSchema} from "@repo/common/types"
 const app = express();
 
 
-app.post("/signup" , function(req,res){
+app.post("/signup" ,(req,res) => {
       
-    const userID = 1;
+    const data = CreateUserSchema.safeParse(req.body);
+    if(!data.success){
+     res.json({
+            message:"incorrect credential "
+        })
+        return
+    }
 
 
     res.json({
@@ -18,6 +25,15 @@ app.post("/signup" , function(req,res){
 
 app.post("/signin" , function(req,res){
     
+
+      const data = SigninSchema.safeParse(req.body);
+    if(!data.success){
+     res.json({
+            message:"incorrect credential "
+        })
+        return
+    }
+
     const userID = 1;
 
     const token = jwt.sign({
@@ -32,6 +48,14 @@ app.post("/signin" , function(req,res){
 
 app.post("/room"  ,middleware, function(req ,res ){
  
+      const data = CreateRoomSchema.safeParse(req.body);
+    if(!data.success){
+     res.json({
+            message:"incorrect credential "
+        })
+        return
+    }
+
     //middleware logic should be written before using it 
    res.json({
     roomId:"4001"
