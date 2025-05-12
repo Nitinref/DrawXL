@@ -1,9 +1,9 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import z from "zod";
 import { JWT_SECRET } from "@repo/backend-common/config";
-import middleware from "./middleware";
-import {CreateUserSchema , SigninSchema , CreateRoomSchema} from "@repo/common/types"
+import middleware from "./middleware"
+import {CreateUserSchema , SigninSchema , CreateRoomSchema} from "@repo/common/types";
+import {Client} from "@repo/db/client"
 const app = express();
 
 
@@ -17,6 +17,8 @@ app.post("/signup" ,(req,res) => {
         return
     }
 
+    //  
+   
 
     res.json({
         message:"user signup"

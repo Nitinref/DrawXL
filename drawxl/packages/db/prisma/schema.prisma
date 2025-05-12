@@ -14,8 +14,8 @@ model User {
   id         String         @default(uuid()) @id
   username   String         @unique
   password   String       
-  name       String          
-  photo      String    
+  name       String?          
+  photo      String?    
   chats      Chat[]    
   rooms      Room[]
 
