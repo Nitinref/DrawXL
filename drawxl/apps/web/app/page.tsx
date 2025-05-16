@@ -14,7 +14,7 @@ export default function Home() {
             <div style={{  justifyContent:"center" , alignItems:"center" , padding:"10" , position:"absolute" , top:"300px" , left:"500px"}}>
               <input type="text" value={roomId}   onChange={(e)=>{setRoomId(e.target.value)}} />
               <button onClick={()=>{
-                router.push(`/${roomId}`)
+                router.push(`/room/${roomId}`)
               }}>join room</button>
             </div>
         </div>

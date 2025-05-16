@@ -32,9 +32,9 @@ app.post("/signup", async (req, res) => {
             message: "user signup",
             userId: user.id
         })
-  
-   } catch (e) {
-       res.status(411).json({
+
+    } catch (e) {
+        res.status(411).json({
             message: "User allready exist with this username"
         })
     }
@@ -106,19 +106,25 @@ app.post("/room", middleware, async function (req, res) {
     }
 })
 app.get("/chats/:roomId", async (req, res) => {
-    const roomId = Number(req.params.roomId);
-    const messages = await Client.chat.findMany({
-        where: {
-            roomId: roomId
-        },
-        orderBy: {
-            id: "desc"
-        },
-        take: 50
-    })
-    res.json({
-        messages
-    })
+    try {
+        const roomId = Number(req.params.roomId);
+        const messages = await Client.chat.findMany({
+            where: {
+                roomId: roomId
+            },
+            orderBy: {
+                id: "desc"
+            },
+            take: 50
+        })
+        res.json({
+            messages
+        })
+    } catch (e) {
+         res.json({
+            messages:[]
+         })
+    }
 })
 
 app.get("/room/:slug", async (req, res) => {
