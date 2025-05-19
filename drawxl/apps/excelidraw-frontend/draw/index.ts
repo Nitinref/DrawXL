@@ -1,32 +1,43 @@
+import { HTTP_BACKEND } from "@/config";
+import axios from "axios";
 
 
 type Shape =
-  | {
-      type: "rect";
-      x: number;
-      y: number;
-      width: number;
-      height: number;
+    | {
+        type: "rect";
+        x: number;
+        y: number;
+        width: number;
+        height: number;
     }
-  | {
-      type: "circle";
-      centerX: number;
-      centerY: number;
-      radius: number;
+    | {
+        type: "circle";
+        centerX: number;
+        centerY: number;
+        radius: number;
     };
 
-export function initDraw(canvas: HTMLCanvasElement) {
+export async  function initDraw(canvas: HTMLCanvasElement , roomId:string , socket:WebSocket) {
 
 
     const ctx = canvas.getContext("2d")
 
-    let existingShape: Shape[] = []
+    let existingShape: Shape[] = await getExistingShapes(roomId)
     if (!ctx) {
         return
     }
-    ctx.fillStyle = "rgba(0,0,0)"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+    socket.onmessage = (event) =>{
+        const message = JSON.parse(event.data);
+
+        if(message.type == "chat"){
+            const parsedShape = JSON.parse(message.message)
+            existingShape.push(parsedShape.shape)
+            clearCanvas(existingShape , canvas , ctx)
+        }
+    }
+
+clearCanvas(existingShape, canvas, ctx)
     let clicked = false
     let startX = 0;
     let startY = 0;
@@ -42,14 +53,23 @@ export function initDraw(canvas: HTMLCanvasElement) {
 
         const width = e.clientX - startX;
         const height = e.clientY - startY;
-
-        existingShape.push({
+        const shape:Shape = {
             type: "rect",
             x: startX,
             y: startY,
             height,
             width
-        })
+        }
+
+        existingShape.push(shape)
+        socket.send(JSON.stringify({
+            type:"chat",
+            message:JSON.stringify({
+                shape
+            }),
+            roomId
+       
+        }))
 
     })
 
@@ -57,7 +77,7 @@ export function initDraw(canvas: HTMLCanvasElement) {
         if (clicked) {
             const width = e.clientX - startX;
             const height = e.clientY - startY;
-            clearCanvas(existingShape , canvas , ctx)
+            clearCanvas(existingShape, canvas, ctx)
             ctx.strokeStyle = "rgba(255,255,255)"
             ctx.strokeRect(startX, startY, width, height)
 
@@ -68,7 +88,7 @@ export function initDraw(canvas: HTMLCanvasElement) {
 
 function clearCanvas(existingShape: Shape[], canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
 
-     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = "rgba(0,0,0)"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -80,3 +100,17 @@ function clearCanvas(existingShape: Shape[], canvas: HTMLCanvasElement, ctx: Can
     })
 
 }
+
+async function getExistingShapes(roomId:string){
+   const res = await axios.get(`${HTTP_BACKEND}/chats/${roomId}`)
+   const messages = res.data.messages;
+
+   const shapes = messages.map((x:{message:string})=>{
+    const messageData = JSON.parse(x.message)
+
+        return messageData.shape;
+   })
+
+   return shapes ;
+    
+} 

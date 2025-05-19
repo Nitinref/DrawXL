@@ -5,7 +5,9 @@ import middleware from "./middleware"
 import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common/types";
 import { Client } from "@repo/db/client"
 import { date } from "zod";
+import cors from "cors"
 const app = express();
+app.use(cors())
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {

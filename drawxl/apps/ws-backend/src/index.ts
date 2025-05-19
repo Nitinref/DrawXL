@@ -79,7 +79,7 @@ wss.on("connection", function connection(ws, request) {
 
             await Client.chat.create({
                 data: {
-                    roomId,
+                    roomId: Number(roomId),
                     message,
                     userId
                 }
