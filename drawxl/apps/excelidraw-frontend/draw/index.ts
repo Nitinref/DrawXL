@@ -35,7 +35,7 @@ export async  function initDraw(canvas: HTMLCanvasElement , roomId:string , sock
             existingShape.push(parsedShape.shape)
             clearCanvas(existingShape , canvas , ctx)
         }
-    }
+    } 
 
 clearCanvas(existingShape, canvas, ctx)
     let clicked = false
