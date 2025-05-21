@@ -23,8 +23,11 @@ export function Canvas({
     }, [canvasRef])
 
     return (
-        <div>
-            <canvas ref={canvasRef} width={1800} height={1000} ></canvas>
+        <div style={{
+            height:"100%",
+            overflow:"hidden"
+        }}>
+            <canvas ref={canvasRef} width={window.innerWidth} height={window.innerHeight} ></canvas>
         </div>
     )
 }

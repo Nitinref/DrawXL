@@ -27,14 +27,19 @@ export function RoomCanvas({roomId}:{roomId:string}) {
     if(!socket){
 
         return <div>
-            Connecting to the server...    </div>
+            Connecting to the server...  
+            
+              </div>
     }
 
     return (
         <div>
 
-        
             <Canvas roomId={roomId} socket={socket}/>
         </div>
     )
 }
+
+// pubsub is a state full connection means a single websocket serber cant handel  more thna10k user so me just make sure that we put  10k 10k and bundles of the user to the pubsub which act as a head of the websocket server
+// ya you here right  scale up and scale down my server 
+//  with the help off  cd pipeline or horizontal scallin and the vertical scalling 

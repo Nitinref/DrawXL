@@ -28,10 +28,10 @@ export async  function initDraw(canvas: HTMLCanvasElement , roomId:string , sock
     }
 
     socket.onmessage = (event) =>{
-        const message = JSON.parse(event.data);
+        const data = JSON.parse(event.data);
 
-        if(message.type == "chat"){
-            const parsedShape = JSON.parse(message.message)
+        if(data.type == "chat"){
+            const parsedShape = JSON.parse(data.message)
             existingShape.push(parsedShape.shape)
             clearCanvas(existingShape , canvas , ctx)
         }
