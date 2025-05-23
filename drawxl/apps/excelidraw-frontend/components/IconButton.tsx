@@ -2,14 +2,15 @@ import { LineChart } from "lucide-react";
 import { ReactNode } from "react";
 
 export function IconButton({
-    icon, onClick
+    icon, onClick,activated
 }: {
     icon: ReactNode,
-    onClick: () => void
+    onClick: () => void,
+    activated:boolean
 }) {
 
-    return <div className="pointer rounded-full border p-2 bg-black hover:bg-blue-300 text-white">
-
+    return <div className={`pointer rounded-full border p-2 bg-black hover:bg-gray-600 ${activated ? "text-red-300" :"text-white"}` }
+onClick={onClick}>
         {icon}
     </div>
 }
