@@ -4,8 +4,9 @@ import { useEffect, useState } from "react"
 import { useRef } from "react";
 import { IconButton } from "./IconButton";
 import { Circle, Pencil, PencilIcon, RectangleEllipsis, RectangleHorizontal } from "lucide-react";
+import { Game } from "@/draw/Game";
 
-type Shape = "circle"| "rect" | "pencil";
+export type  Tool = "circle"| "rect" | "pencil";
 
 export function Canvas({
     roomId,
@@ -16,19 +17,27 @@ export function Canvas({
 }) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [selectedTool , setSelectedTool] = useState<Shape>("circle")
+    const [game , setGame] = useState<Game>()
+    const [selectedTool , setSelectedTool] = useState<Tool>("circle")
 
     useEffect(()=>{
     // @ts-ignore
     window.selectedTool = selectedTool;
     },[selectedTool])
 
-    
+    useEffect(()=>{
+        game?.setTool(selectedTool)
+    },[selectedTool , game])
 
     useEffect(() => {
 
         if (canvasRef.current) {
-            initDraw(canvasRef.current, roomId, socket)
+            const g = new Game(canvasRef.current, roomId, socket);
+           setGame(g)
+
+           return () =>{
+            g.destroy()
+           }
 
         }
     }, [canvasRef])
@@ -48,8 +57,8 @@ export function Canvas({
 
 
 function Topbar({selectedTool , setSelectedTool}:{
-    selectedTool :Shape,
-    setSelectedTool:(s:Shape) => void;
+    selectedTool :Tool,
+    setSelectedTool:(s:Tool) => void;
 }) {
     return <div style={{
         position: "fixed",
