@@ -107,6 +107,14 @@ app.post("/room", middleware, async function (req, res) {
         })
     }
 })
+app.get("/rooms" ,middleware ,async function(req,res){
+
+    const rooms = await Client.room.findMany()
+
+    res.json(rooms)
+  
+})
+
 app.get("/chats/:roomId", async (req, res) => {
     try {
         const roomId = Number(req.params.roomId);

@@ -1,9 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Pencil, ArrowRight } from "lucide-react";
-import Signup from "./Signup";
-import Signin from "./Signin";
-import Card from "./Card";
+import Card from "../Card";
 
 export default function Home() {
   return (
@@ -24,10 +22,6 @@ export default function Home() {
           <Link href="#contact" className="text-black text-lg hover:text-xl duration-300">Contact</Link>
         </div>
 
-        <div className="flex gap-2 sm:gap-3">
-          <Signin text="Signin" />
-          <Signup text="Signup" />
-        </div>
       </div>
 
       {/* Hero Section */}
@@ -45,12 +39,15 @@ export default function Home() {
             The ultimate drawing application that transforms your ideas into stunning digital art with professional tools and intuitive controls.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            <Link href="/signup" className="h-[55px] sm:h-[60px] w-full sm:w-[250px] bg-black rounded-xl flex items-center justify-center hover:bg-gray-800 transition text-white text-xl sm:text-2xl font-semibold">
-              Get Started
+            <Link href="/room" className="h-[55px] sm:h-[60px] w-full sm:w-[250px] bg-black rounded-xl flex items-center justify-center hover:bg-gray-800 transition text-white text-xl sm:text-2xl font-semibold">
+              Create Room
               <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <div className="h-[55px] sm:h-[60px] w-full sm:w-[250px] border rounded-xl flex items-center justify-center bg-white text-xl sm:text-2xl text-black font-semibold cursor-pointer">
-              <a>Watch demo</a>
+              <Link href="/JoinRoom" >
+               Join Room
+              </Link>
+             
             </div>
           </div>
         </div>
@@ -81,57 +78,6 @@ export default function Home() {
       <div className="px-6 sm:px-12 py-10">
         <Card />
       </div>
-
-       <footer className="bg-black text-gray-300 py-12 px-6 sm:px-12 lg:px-16">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="bg-black rounded-full p-1.5">
-                <Pencil className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">drawXL</span>
-            </div>
-            <p className="text-gray-400 text-sm">
-              The ultimate collaborative drawing platform for artists, designers, and creative teams.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-white font-medium mb-4">Product</h3>
-            <ul className="space-y-3">
-              {['Features', 'Pricing', 'Templates', 'Integrations', 'Roadmap'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">{item}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-white font-medium mb-4">Resources</h3>
-            <ul className="space-y-3">
-              {['Documentation', 'Tutorials', 'Blog', 'Community', 'Support'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">{item}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-white font-medium mb-4">Company</h3>
-            <ul className="space-y-3">
-              {['About', 'Careers', 'Privacy', 'Terms', 'Contact'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">{item}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto pt-12 mt-12 border-t border-gray-800 text-center text-gray-500 text-sm">
-          © {new Date().getFullYear()} DrawXL. All rights reserved.
-        </div>
-      </footer>
     </div>
   );
 }
-      
- 
