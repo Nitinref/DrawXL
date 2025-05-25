@@ -68,11 +68,11 @@ async function checkUser() {
             <div className=" absolute text-black font-bold text-3xl flex mb-100 ml-8">Create Your Account</div>
             <span className="absolute text-zinc-600 mb-80 text-xl ml-5">Join drawXL and start creating amazing art</span>
             <div className="mt-5 mr-6 ">
-                <div className="ml-9 font-normal text-lg mt-14">Name</div>
+                <div className="ml-9 font-normal text-md mt-14">Name</div>
                 <input onChange={(e)=>{setName(e.target.value)}} 
                 value={name}
                  type="text"
-                  placeholder="email"
+                  placeholder="name"
 
 
                    className="bg-white text-black w-[450px] h-[50px] border ml-8 rounded-xl text-zinc-600 mb-4 text-2xl text-center" />

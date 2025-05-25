@@ -1,27 +1,29 @@
 "use client"
-
 import { HTTP_BACKEND } from "@/config"
 import axios from "axios"
 import { useState } from "react"
-import { PencilRuler, ArrowRight } from "lucide-react"
+import { PencilRuler, ArrowRight, Loader2 } from "lucide-react"
 import Link from "next/link"
 
 export default function Room() {
   const [roomName, setRoomName] = useState<string>("")
-
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+ 
   async function getRoom() {
     const token = localStorage.getItem("token")
-
+ 
     if (!token) {
       alert("Please sign in to access collaborative rooms")
       return
     }
-
+ 
     if (!roomName.trim()) {
       alert("Please enter a room name")
       return
     }
-
+ 
+    setIsLoading(true)
+ 
     try {
       const response = await axios.post(
         `${HTTP_BACKEND}/room`,
@@ -40,9 +42,11 @@ export default function Room() {
     } catch (error) {
       console.error("Room access error:", error)
       alert("Failed to access room. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
-
+ 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-100 to-black flex flex-col items-center justify-center p-4 font-mono">
       <div className="w-full max-w-md border-2 border-black rounded-lg shadow-[8px_8px_0_0_rgba(0,0,0,1)] bg-white">
@@ -51,7 +55,7 @@ export default function Room() {
           <PencilRuler className="h-6 w-6" />
           <h1 className="text-xl font-bold">COLLABORATIVE DRAWING ROOM</h1>
         </div>
-
+ 
         {/* Content */}
         <div className="p-6 space-y-6">
           <div className="space-y-2">
@@ -62,19 +66,30 @@ export default function Room() {
               onChange={(e) => setRoomName(e.target.value)}
               className="w-full px-4 py-3 border-2 border-black rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-black"
               placeholder="Enter room name"
+              disabled={isLoading}
             />
           </div>
-
-         <Link href={"/JoinRoom"}> <button
-            onClick={getRoom}
-            className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 px-4 rounded-md border-2 border-black hover:bg-white hover:text-black hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all duration-300 ease-in-out cursor-pointer"
-          >
-            <span>CREATE ROOM</span>
-            <ArrowRight className="h-5 w-5" />
-          </button>
+          <Link href={"/JoinRoom"}> 
+            <button
+              onClick={getRoom}
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 px-4 rounded-md border-2 border-black hover:bg-white hover:text-black hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all duration-300 ease-in-out cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black disabled:hover:text-white disabled:hover:shadow-none"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>CREATING...</span>
+                </>
+              ) : (
+                <>
+                  <span>CREATE ROOM</span>
+                  <ArrowRight className="h-5 w-5" />
+                </>
+              )}
+            </button>
           </Link>
         </div>
-
+ 
         {/* Footer */}
         <div className="bg-black text-white text-xs p-2 text-center rounded-b-lg select-none">
           Draw together in real-time with collaborative tools
