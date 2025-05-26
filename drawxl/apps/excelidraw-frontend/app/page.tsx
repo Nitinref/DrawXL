@@ -45,11 +45,16 @@ export default function Home() {
             The ultimate drawing application that transforms your ideas into stunning digital art with professional tools and intuitive controls.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            <Link href="/signup" className="h-[55px] sm:h-[60px] w-full sm:w-[250px] bg-black rounded-xl flex items-center justify-center hover:bg-gray-800 transition text-white text-xl sm:text-2xl font-semibold">
-              Get Started
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            <Link
+              href="/signup"
+              className="group h-[55px] sm:h-[60px] w-full sm:w-[240px] border border-black bg-black text-white rounded-full flex items-center justify-center text-lg font-semibold hover:bg-white hover:text-black transition"
+            >
+              <span className="flex items-center">
+                GET STARTED
+                <ArrowRight className="ml-2 h-5 w-5 transform transition-transform duration-300 group-hover:translate-x-2" />
+              </span>
             </Link>
-            <div className="h-[55px] sm:h-[60px] w-full sm:w-[250px] border rounded-xl flex items-center justify-center bg-white text-xl sm:text-2xl text-black font-semibold cursor-pointer">
+            <div className="h-[55px] sm:h-[60px] w-full sm:w-[250px] border rounded-4xl flex items-center justify-center bg-white text-xl sm:text-2xl text-black font-semibold cursor-pointer">
               <a>Watch demo</a>
             </div>
           </div>
@@ -82,7 +87,7 @@ export default function Home() {
         <Card />
       </div>
 
-       <footer className="bg-black text-gray-300 py-12 px-6 sm:px-12 lg:px-16">
+      <footer className="bg-black text-gray-300 py-12 px-6 sm:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -133,5 +138,4 @@ export default function Home() {
     </div>
   );
 }
-      
- 
+
