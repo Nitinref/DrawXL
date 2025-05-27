@@ -109,7 +109,7 @@ export default function JoinRoom() {
                             <div className="grid gap-4">
                                 {rooms.map((room, index) => (
                                     <div
-                                        key={room.id}
+                                        key={room.slug}
                                         className="group bg-gray-50 hover:bg-gray-100 rounded-xl p-6 transition-all duration-300 border border-gray-200 hover:border-black"
                                     >
                                         <div className="flex justify-between items-center">
@@ -118,7 +118,7 @@ export default function JoinRoom() {
                                                     <div className="bg-black text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                                                         {index + 1}
                                                     </div>
-                                                    <h3 className="text-lg font-bold text-gray-900">{room.name || `Room ${room.id}`}</h3>
+                                                    <h3 className="text-lg font-bold text-gray-900">{room.slug}`</h3>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-gray-500">
                                                     <Users className="h-4 w-4" />

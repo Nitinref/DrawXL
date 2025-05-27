@@ -109,7 +109,8 @@ app.post("/room", middleware, async function (req, res) {
 })
 app.get("/rooms" ,middleware ,async function(req,res){
 
-    const rooms = await Client.room.findMany()
+    const rooms = await Client.room.findMany({})
+
 
     res.json(rooms)
   
