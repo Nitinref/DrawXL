@@ -25,8 +25,10 @@ type Shape = {
     startY: number;
     endX: number;
     endY: number
+
 } | {
     type: "text",
+
 } | {
     type: "erase"
 }
@@ -84,38 +86,8 @@ export class Game {
                 const parsedShape = JSON.parse(message.message)
                 this.existingShapes.push(parsedShape.shape)
                 this.clearCanvas();
-            } else if (message.type == "erase") {
-                const { x, y } = JSON.parse(message.message);
-                this.handleRemoteErase(x, y);
-                this.clearCanvas();
             }
         }
-    }
-
-    handleRemoteErase(x: number, y: number) {
-        const eraserRadius = 10;
-        this.existingShapes = this.existingShapes.filter((shape) => {
-            if (shape.type === "pencil") {
-                const dist = Math.hypot(shape.startX - x, shape.startY - y)
-                return dist > eraserRadius
-            }
-            else if (shape.type === "circle") {
-                const dist = Math.hypot(shape.centerX - x, shape.centerY - y);
-                return dist > shape.radius;
-            } else if (shape.type === "rect") {
-                return !(
-                    x >= shape.x &&
-                    x <= shape.x + shape.width &&
-                    y >= shape.y &&
-                    y <= shape.y + shape.height
-                );
-            } else if (shape.type === "line") {
-                const distStart = Math.hypot(shape.startX - x, shape.startY - y);
-                const distEnd = Math.hypot(shape.endX - x, shape.endY - y);
-                return distStart > eraserRadius && distEnd > eraserRadius;
-            }
-            return true;
-        });
     }
 
     clearCanvas() {
@@ -164,8 +136,9 @@ export class Game {
         this.clicked = false
 
         if (this.selectedTool === "eraser") {
-            return;
-        }
+
+    return;
+  }
 
         const width = e.clientX - this.startX;
         const height = e.clientY - this.startY;
@@ -259,6 +232,8 @@ export class Game {
                 this.lastX = e.clientX;
                 this.lastY = e.clientY;
 
+
+
                 this.socket.send(JSON.stringify({
                     type: "chat",
                     message: JSON.stringify({
@@ -269,10 +244,33 @@ export class Game {
             } else if (this.selectedTool === "eraser") {
                 const currentX = e.clientX;
                 const currentY = e.clientY;
-                
-                this.handleRemoteErase(currentX, currentY);
-                this.clearCanvas();
-                
+                const eraserRadius = 10;
+
+                this.existingShapes = this.existingShapes.filter((shape) => {
+                    if (shape.type === "pencil") {
+                        const dist = Math.hypot(shape.startX - currentX, shape.startY - currentY)
+                        return dist > eraserRadius
+                    }
+
+                   else if (shape.type === "circle") {
+                        const dist = Math.hypot(shape.centerX - currentX, shape.centerY - currentY);
+                        return dist > shape.radius;
+                    } else if (shape.type === "rect") {
+                        return !(
+                            currentX >= shape.x &&
+                            currentX <= shape.x + shape.width &&
+                            currentY >= shape.y &&
+                            currentY <= shape.y + shape.height
+                        );
+                    } else if (shape.type === "line") {
+                        const distStart = Math.hypot(shape.startX - currentX, shape.startY - currentY);
+                        const distEnd = Math.hypot(shape.endX - currentX, shape.endY - currentY);
+                        return distStart > eraserRadius && distEnd > eraserRadius;
+                    }
+                    return true;
+                });
+
+                 this.clearCanvas();
                 this.socket.send(JSON.stringify({
                     type: "erase",
                     message: JSON.stringify({
@@ -281,6 +279,8 @@ export class Game {
                     }),
                     roomId: this.roomId
                 }));
+
+
             }
         }
     }
