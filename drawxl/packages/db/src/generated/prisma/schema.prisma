@@ -25,6 +25,7 @@ model Room {
   createdAt DateTime @default(now())
   admin     User     @relation(fields: [adminId], references: [id])
   chats     Chat[]
+  shapes    Shape[]
 }
 
 model Chat {
@@ -34,4 +35,22 @@ model Chat {
   userId  String
   room    Room   @relation(fields: [roomId], references: [id])
   user    User   @relation(fields: [userId], references: [id])
+}
+
+model Shape {
+  id      Int     @id @default(autoincrement())
+  roomId  Int // <-- Corrected here
+  type    String
+  startX  Float?
+  startY  Float?
+  endX    Float?
+  endY    Float?
+  centerX Float?
+  centerY Float?
+  radius  Float?
+  width   Float?
+  height  Float?
+  color   String?
+
+  room Room @relation(fields: [roomId], references: [id])
 }

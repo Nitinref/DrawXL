@@ -1,296 +1,318 @@
-"use client"
+"use client";
 import { Tool } from "@/components/Canvas";
 import { getExistingShapes } from "./http";
 
+// Shape types with `id`
 type Shape = {
-    type: "rect";
-    x: number;
-    y: number;
-    width: number;
-    height: number;
+  id: string;
+  type: "rect";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 } | {
-    type: "circle";
-    centerX: number;
-    centerY: number;
-    radius: number;
+  id: string;
+  type: "circle";
+  centerX: number;
+  centerY: number;
+  radius: number;
 } | {
-    type: "line";
-    startX: number;
-    startY: number;
-    endX: number;
-    endY: number;
+  id: string;
+  type: "line";
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
 } | {
-    type: "pencil";
-    startX: number;
-    startY: number;
-    endX: number;
-    endY: number
-
+  id: string;
+  type: "pencil";
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
 } | {
-    type: "text",
-
+  id: string;
+  type: "text";
 } | {
-    type: "erase"
-}
+  id: string;
+  type: "erase";
+};
 
 export class Game {
 
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
-    private existingShapes: Shape[]
-    private roomId: string;
-    private clicked: boolean;
-    private startX = 0;
-    private startY = 0;
-    private selectedTool: Tool = "circle";
-    private lastX: number = 0;
-    private lastY: number = 0;
+  private canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
+  private existingShapes: Shape[];
+  private roomId: string;
+  private clicked: boolean;
+  private startX = 0;
+  private startY = 0;
+  private selectedTool: Tool = "circle";
+  private lastX: number = 0;
+  private lastY: number = 0;
 
+  socket: WebSocket;
 
-    socket: WebSocket;
-
-    constructor(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext("2d")!;
-        this.existingShapes = [];
-        this.roomId = roomId;
-        this.socket = socket;
-        this.clicked = false;
-        this.init();
-        this.initHandlers();
-        this.initMouseHandlers();
-    }
-
-    destroy() {
-        this.canvas.removeEventListener("mousedown", this.mouseDownHandler)
-
-        this.canvas.removeEventListener("mouseup", this.mouseUpHandler)
-
-        this.canvas.removeEventListener("mousemove", this.mouseMoveHandler)
-    }
-
-    setTool(tool: "circle" | "rect" | "pencil" | "line" | "eraser") {
-        this.selectedTool = tool;
-    }
-    async init() {
-        this.existingShapes = await getExistingShapes(this.roomId)
-        console.log(getExistingShapes)
-    }
-
-    initHandlers() {
-        this.socket.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            
-
-            if (message.type == "chat") {
-                const parsedShape = JSON.parse(message.message)
-                this.existingShapes.push(parsedShape.shape)
-                this.clearCanvas();
-            }
-        }
-    }
-
-    clearCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "rgba(0, 0, 0)"
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        this.existingShapes.map((shape) => {
-            if (shape.type === "rect") {
-                this.ctx.strokeStyle = "rgba(255, 255, 255)"
-                this.ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
-            } else if (shape.type === "circle") {
-                console.log(shape);
-                this.ctx.beginPath();
-                this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
-                this.ctx.stroke();
-                this.ctx.closePath();
-            } else if (shape.type === "line") {
-                this.ctx.beginPath();
-                this.ctx.moveTo(shape.startX, shape.startY);
-                this.ctx.lineTo(shape.endX, shape.endY);
-                this.ctx.stroke();
-                this.ctx.closePath();
-            } else if (shape.type === "pencil") {
-                this.ctx.beginPath();
-                this.ctx.moveTo(shape.startX, shape.startY);
-                this.ctx.lineTo(shape.endX, shape.endY);
-                this.ctx.stroke();
-                this.ctx.closePath();
-            }
-
-        })
-    }
-
-    mouseDownHandler = (e: { clientX: number; clientY: number; }) => {
-        this.clicked = true
-        this.startX = e.clientX
-        this.startY = e.clientY
-
-        if (this.selectedTool === "pencil") {
-            this.lastX = e.clientX
-            this.lastY = e.clientY
-        }
-    }
-    mouseUpHandler = (e: { clientX: number; clientY: number; }) => {
-        this.clicked = false
-
-        if (this.selectedTool === "eraser") {
-
-    return;
+  constructor(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d")!;
+    this.existingShapes = [];
+    this.roomId = roomId;
+    this.socket = socket;
+    this.clicked = false;
+    this.init();
+    this.initHandlers();
+    this.initMouseHandlers();
   }
 
-        const width = e.clientX - this.startX;
-        const height = e.clientY - this.startY;
+  destroy() {
+    this.canvas.removeEventListener("mousedown", this.mouseDownHandler);
+    this.canvas.removeEventListener("mouseup", this.mouseUpHandler);
+    this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
+  }
 
-        const selectedTool = this.selectedTool;
-        let shape: Shape | null = null;
-        if (selectedTool === "rect") {
+  setTool(tool: "circle" | "rect" | "pencil" | "line" | "eraser") {
+    this.selectedTool = tool;
+  }
 
-            shape = {
-                type: "rect",
-                x: this.startX,
-                y: this.startY,
-                height,
-                width
-            }
-        } else if (selectedTool === "circle") {
-            const radius = Math.max(width, height) / 2;
-            shape = {
-                type: "circle",
-                radius: radius,
-                centerX: this.startX + radius,
-                centerY: this.startY + radius,
-            }
-        } else if (this.selectedTool === "line") {
-            shape = {
-                type: "line",
-                startX: this.startX,
-                startY: this.startY,
-                endX: e.clientX,
-                endY: e.clientY
-            };
+  async init() {
+    this.existingShapes = await getExistingShapes(this.roomId);
+    this.clearCanvas();
+  }
+
+  initHandlers() {
+    this.socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+
+      if (message.type === "chat") {
+        const parsedShape = JSON.parse(message.message);
+        this.existingShapes.push(parsedShape.shape);
+        this.clearCanvas();
+      } else if (message.type === "erase") {
+        const { id } = JSON.parse(message.message);
+        this.existingShapes = this.existingShapes.filter(shape => shape.id !== id);
+        this.clearCanvas();
+      }
+    }
+  }
+
+  clearCanvas() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = "rgba(0, 0, 0)";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.existingShapes.forEach((shape) => {
+      this.ctx.strokeStyle = "rgba(255, 255, 255)";
+      if (shape.type === "rect") {
+        this.ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+      } else if (shape.type === "circle") {
+        this.ctx.beginPath();
+        this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
+        this.ctx.stroke();
+        this.ctx.closePath();
+      } else if (shape.type === "line" || shape.type === "pencil") {
+        this.ctx.beginPath();
+        this.ctx.moveTo(shape.startX, shape.startY);
+        this.ctx.lineTo(shape.endX, shape.endY);
+        this.ctx.stroke();
+        this.ctx.closePath();
+      }
+    });
+  }
+
+  generateId() {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
+  mouseDownHandler = (e: { clientX: number; clientY: number; }) => {
+    this.clicked = true;
+    this.startX = e.clientX;
+    this.startY = e.clientY;
+
+    if (this.selectedTool === "pencil") {
+      this.lastX = e.clientX;
+      this.lastY = e.clientY;
+    }
+  }
+
+  mouseUpHandler = async (e: { clientX: number; clientY: number; }) => {
+    this.clicked = false;
+
+    if (this.selectedTool === "eraser") {
+  
+      return;
+    }
+
+    const width = e.clientX - this.startX;
+    const height = e.clientY - this.startY;
+
+    let shape: Shape | null = null;
+    const id = this.generateId();
+
+    if (this.selectedTool === "rect") {
+      shape = {
+        id,
+        type: "rect",
+        x: this.startX,
+        y: this.startY,
+        width,
+        height,
+      };
+    } else if (this.selectedTool === "circle") {
+      const radius = Math.max(Math.abs(width), Math.abs(height)) / 2;
+      shape = {
+        id,
+        type: "circle",
+        radius,
+        centerX: this.startX + radius,
+        centerY: this.startY + radius,
+      };
+    } else if (this.selectedTool === "line") {
+      shape = {
+        id,
+        type: "line",
+        startX: this.startX,
+        startY: this.startY,
+        endX: e.clientX,
+        endY: e.clientY,
+      };
+    }
+
+    if (!shape) return;
+
+    this.existingShapes.push(shape);
+    this.clearCanvas();
+
+    
+    this.socket.send(JSON.stringify({
+      type: "chat",
+      message: JSON.stringify({ shape }),
+      roomId: this.roomId,
+    }));
+  }
+
+  mouseMoveHandler = async (e: { clientX: number; clientY: number; }) => {
+    if (!this.clicked) return;
+
+    const width = e.clientX - this.startX;
+    const height = e.clientY - this.startY;
+
+    this.clearCanvas();
+    this.ctx.strokeStyle = "rgba(255, 255, 255)";
+
+    if (this.selectedTool === "rect") {
+      this.ctx.strokeRect(this.startX, this.startY, width, height);
+    } else if (this.selectedTool === "circle") {
+      const radius = Math.max(Math.abs(width), Math.abs(height)) / 2;
+      const centerX = this.startX + radius;
+      const centerY = this.startY + radius;
+      this.ctx.beginPath();
+      this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      this.ctx.stroke();
+      this.ctx.closePath();
+    } else if (this.selectedTool === "line") {
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.startX, this.startY);
+      this.ctx.lineTo(e.clientX, e.clientY);
+      this.ctx.stroke();
+      this.ctx.closePath();
+    } else if (this.selectedTool === "pencil") {
+      const shape: Shape = {
+        id: this.generateId(),
+        type: "pencil",
+        startX: this.lastX,
+        startY: this.lastY,
+        endX: e.clientX,
+        endY: e.clientY,
+      };
+
+      this.existingShapes.push(shape);
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.lastX, this.lastY);
+      this.ctx.lineTo(e.clientX, e.clientY);
+      this.ctx.stroke();
+      this.ctx.closePath();
+
+      this.lastX = e.clientX;
+      this.lastY = e.clientY;
+
+      this.socket.send(JSON.stringify({
+        type: "chat",
+        message: JSON.stringify({ shape }),
+        roomId: this.roomId,
+      }));
+
+     
+    } else if (this.selectedTool === "eraser") {
+      const currentX = e.clientX;
+      const currentY = e.clientY;
+      const eraserRadius = 10;
+
+
+      const shapesToErase = this.existingShapes.filter(shape => {
+        if (shape.type === "pencil") {
+          const dist = Math.hypot(shape.startX - currentX, shape.startY - currentY);
+          return dist <= eraserRadius;
+        } else if (shape.type === "circle") {
+          const dist = Math.hypot(shape.centerX - currentX, shape.centerY - currentY);
+          return dist <= shape.radius + eraserRadius;
+        } else if (shape.type === "rect") {
+          return currentX >= shape.x - eraserRadius &&
+                 currentX <= shape.x + shape.width + eraserRadius &&
+                 currentY >= shape.y - eraserRadius &&
+                 currentY <= shape.y + shape.height + eraserRadius;
+        } else if (shape.type === "line") {
+        
+          const { startX, startY, endX, endY } = shape;
+          const A = currentX - startX;
+          const B = currentY - startY;
+          const C = endX - startX;
+          const D = endY - startY;
+
+          const dot = A * C + B * D;
+          const len_sq = C * C + D * D;
+          let param = -1;
+          if (len_sq !== 0) param = dot / len_sq;
+
+          let xx, yy;
+
+          if (param < 0) {
+            xx = startX;
+            yy = startY;
+          } else if (param > 1) {
+            xx = endX;
+            yy = endY;
+          } else {
+            xx = startX + param * C;
+            yy = startY + param * D;
+          }
+
+          const dist = Math.hypot(currentX - xx, currentY - yy);
+          return dist <= eraserRadius;
         }
+        return false;
+      });
 
-
-        if (!shape) {
-            return;
-        }
-
-        this.existingShapes.push(shape);
+      for (const shape of shapesToErase) {
+    
+        this.existingShapes = this.existingShapes.filter(s => s.id !== shape.id);
+        this.clearCanvas();
 
         this.socket.send(JSON.stringify({
-            type: "chat",
-            message: JSON.stringify({
-                shape
-            }),
-            roomId: this.roomId
-        }))
+          type: "erase",
+          message: JSON.stringify({ id: shape.id }),
+          roomId: this.roomId,
+        }));
+
+    
+      }
     }
-    mouseMoveHandler = (e: { clientX: number; clientY: number; }) => {
-        if (this.clicked) {
+  }
 
-            const width = e.clientX - this.startX;
-            const height = e.clientY - this.startY;
-            this.clearCanvas();
-            this.ctx.strokeStyle = "rgba(255, 255, 255)"
-            const selectedTool = this.selectedTool;
-            console.log(selectedTool)
-            if (selectedTool === "rect") {
-                this.ctx.strokeRect(this.startX, this.startY, width, height);
-            } else if (selectedTool === "circle") {
-                const radius = Math.max(width, height) / 2;
-                const centerX = this.startX + radius;
-                const centerY = this.startY + radius;
-                this.ctx.beginPath();
-                this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI * 2);
-                this.ctx.stroke();
-                this.ctx.closePath();
-            } else if (this.selectedTool === "line") {
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(this.startX, this.startY);
-                this.ctx.lineTo(e.clientX, e.clientY);
-                this.ctx.stroke();
-                this.ctx.closePath();
-            } else if (this.selectedTool === "pencil") {
-                const shape: Shape = {
-                    type: "pencil",
-                    startX: this.lastX,
-                    startY: this.lastY,
-                    endX: e.clientX,
-                    endY: e.clientY,
-                };
-                this.existingShapes.push(shape);
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(this.lastX, this.lastY);
-                this.ctx.lineTo(e.clientX, e.clientY);
-                this.ctx.stroke();
-                this.ctx.closePath();
-
-                this.lastX = e.clientX;
-                this.lastY = e.clientY;
-
-
-
-                this.socket.send(JSON.stringify({
-                    type: "chat",
-                    message: JSON.stringify({
-                        shape
-                    }),
-                    roomId: this.roomId
-                }))
-            } else if (this.selectedTool === "eraser") {
-                const currentX = e.clientX;
-                const currentY = e.clientY;
-                const eraserRadius = 10;
-
-                this.existingShapes = this.existingShapes.filter((shape) => {
-                    if (shape.type === "pencil") {
-                        const dist = Math.hypot(shape.startX - currentX, shape.startY - currentY)
-                        return dist > eraserRadius
-                    }
-
-                   else if (shape.type === "circle") {
-                        const dist = Math.hypot(shape.centerX - currentX, shape.centerY - currentY);
-                        return dist > shape.radius;
-                    } else if (shape.type === "rect") {
-                        return !(
-                            currentX >= shape.x &&
-                            currentX <= shape.x + shape.width &&
-                            currentY >= shape.y &&
-                            currentY <= shape.y + shape.height
-                        );
-                    } else if (shape.type === "line") {
-                        const distStart = Math.hypot(shape.startX - currentX, shape.startY - currentY);
-                        const distEnd = Math.hypot(shape.endX - currentX, shape.endY - currentY);
-                        return distStart > eraserRadius && distEnd > eraserRadius;
-                    }
-                    return true;
-                });
-
-                 this.clearCanvas();
-                this.socket.send(JSON.stringify({
-                    type: "erase",
-                    message: JSON.stringify({
-                        x: currentX,
-                        y: currentY
-                    }),
-                    roomId: this.roomId
-                }));
-
-
-            }
-        }
-    }
-
-    initMouseHandlers() {
-        this.canvas.addEventListener("mousedown", this.mouseDownHandler)
-
-        this.canvas.addEventListener("mouseup", this.mouseUpHandler)
-
-        this.canvas.addEventListener("mousemove", this.mouseMoveHandler)
-
-    }
+  initMouseHandlers() {
+    this.canvas.addEventListener("mousedown", this.mouseDownHandler);
+    this.canvas.addEventListener("mouseup", this.mouseUpHandler);
+    this.canvas.addEventListener("mousemove", this.mouseMoveHandler);
+  }
 }

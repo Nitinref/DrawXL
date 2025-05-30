@@ -98,6 +98,23 @@ wss.on("connection", function connection(ws, request) {
 
 
         }
-    })
-})
 
+
+        if (parsedData.type === "erase") {
+            const roomId = parsedData.roomId;
+            const eraseData = parsedData.message; // { x, y } or custom format
+
+            users.forEach(user => {
+                if (user.rooms.includes(roomId)) {
+                    user.ws.send(
+                        JSON.stringify({
+                            type: "erase",
+                            message: eraseData,
+                            roomId,
+                        })
+                    );
+                }
+            });
+        }
+    });
+})

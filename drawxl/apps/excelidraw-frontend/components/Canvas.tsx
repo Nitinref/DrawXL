@@ -3,11 +3,12 @@ import { Socket } from "dgram";
 import { useEffect, useState } from "react"
 import { useRef } from "react";
 import { IconButton } from "./IconButton";
-import { ArrowLeftToLine, ArrowLeftToLineIcon, Baseline, Circle, Eraser, LucideCheckLine, LucideLineChart, LucidePencilLine, MessageSquareText, Minus, Pencil, PencilIcon, PencilLine, PenLine, RectangleHorizontal, Text } from "lucide-react";
+import { MoveRight, Baseline, Circle, Eraser, LucideCheckLine, LucideLineChart, LucidePencilLine, MessageSquareText, Minus, Pencil, PencilIcon, RectangleHorizontal, Text, Hand } from "lucide-react";
 import { Game } from "@/draw/Game";
 import { Linefont } from "next/font/google";
 
-export type Tool = "circle" | "rect" | "pencil" | "eraser" | "text" |"line";
+
+export type Tool = "circle" | "rect" | "pencil" | "eraser" | "text" | "line" | "moveright" | "pan";
 
 export function Canvas({
     roomId,
@@ -85,6 +86,12 @@ function Topbar({ selectedTool, setSelectedTool }: {
                 <IconButton onClick={() => {
                     setSelectedTool("line")
                 }} activated={selectedTool === "line"} icon={<Minus />} />
+                <IconButton onClick={() => {
+                    setSelectedTool("moveright")
+                }} activated={selectedTool === "moveright"} icon={<MoveRight />} />
+                <IconButton onClick={() => {
+                    setSelectedTool("pan")
+                }} activated={selectedTool === "pan"} icon={<Hand/>} />
             </div>
         </div>
     </div>

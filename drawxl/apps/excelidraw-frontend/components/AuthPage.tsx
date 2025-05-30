@@ -36,10 +36,10 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
             if (isSignin) {
                 localStorage.setItem("token", token);
                 setSuccess("Logged in successfully!");
-                setTimeout(() => router.push("/dashboard"), 1500);
+                setTimeout(() => router.push("/dashboard"), 1000);
             } else {
                 setSuccess("Account created! Redirecting to login...");
-                setTimeout(() => router.push("/signin"), 1500);
+                setTimeout(() => router.push("/signin"), 1000);
             }
         } catch (err) {
             setError(

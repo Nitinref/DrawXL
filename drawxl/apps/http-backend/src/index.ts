@@ -73,7 +73,7 @@ app.post("/signin", async function (req, res) {
     }, JWT_SECRET)
 
     res.json({
-        token
+        token  
     })
 
 })
@@ -115,13 +115,17 @@ app.get("/rooms" ,middleware ,async function(req,res){
     res.json(rooms)
   
 })
+// @ts-ignore
+// Add this to your existing backend routes
+
 
 app.get("/chats/:roomId", async (req, res) => {
     try {
         const roomId = Number(req.params.roomId);
         const messages = await Client.chat.findMany({
             where: {
-                roomId: roomId
+                roomId: roomId,
+                
             },
             orderBy: {
                 id: "desc"
@@ -138,6 +142,33 @@ app.get("/chats/:roomId", async (req, res) => {
     }
 })
 
+
+app.post("/chat", middleware, async (req, res) => {
+    const { roomId, message } = req.body;
+    // @ts-ignore
+    const userId = req.userId;
+
+    try {
+        const chat = await Client.chat.create({
+            data: {
+                roomId,
+                userId,
+                message
+            }
+        });
+
+        res.json({
+            chatId: chat.id,
+            message: "Chat created successfully"
+        });
+    } catch (e) {
+        res.status(500).json({
+            message: "Failed to create chat"
+        });
+    }
+});
+
+
 app.get("/room/:slug", async (req, res) => {
     const slug = req.params.slug;
     const room = await Client.room.findFirst({
@@ -151,7 +182,5 @@ app.get("/room/:slug", async (req, res) => {
         room
     })
 })
-
-
 
 app.listen(4000)

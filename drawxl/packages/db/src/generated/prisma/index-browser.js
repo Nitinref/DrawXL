@@ -142,6 +142,22 @@ exports.Prisma.ChatScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.ShapeScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  type: 'type',
+  startX: 'startX',
+  startY: 'startY',
+  endX: 'endX',
+  endY: 'endY',
+  centerX: 'centerX',
+  centerY: 'centerY',
+  radius: 'radius',
+  width: 'width',
+  height: 'height',
+  color: 'color'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -161,7 +177,8 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   User: 'User',
   Room: 'Room',
-  Chat: 'Chat'
+  Chat: 'Chat',
+  Shape: 'Shape'
 };
 
 /**
