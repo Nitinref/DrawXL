@@ -33,6 +33,9 @@ type Shape = {
 } | {
   id: string;
   type: "text";
+  x:number,
+  y:number,
+  content:string
 } | {
   id: string;
   type: "erase";
@@ -71,7 +74,7 @@ export class Game {
     this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
   }
 
-  setTool(tool: "circle" | "rect" | "pencil" | "line" | "eraser") {
+  setTool(tool: "circle" | "rect" | "pencil" | "line" | "eraser"|"text") {
     this.selectedTool = tool;
   }
 
@@ -116,7 +119,12 @@ export class Game {
         this.ctx.lineTo(shape.endX, shape.endY);
         this.ctx.stroke();
         this.ctx.closePath();
-      }
+      }else if (shape.type === "text") {
+  this.ctx.fillStyle = "white";
+  this.ctx.font = "16px sans-serif";
+  this.ctx.fillText(shape.content, shape.x, shape.y);
+}
+
     });
   }
 
@@ -124,10 +132,61 @@ export class Game {
     return Math.random().toString(36).substr(2, 9);
   }
 
+  createTextInput(x: number, y: number) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.style.position = "absolute";
+  input.style.left = `${x}px`;
+  input.style.top = `${y}px`;
+  input.style.background = "transparent";
+  input.style.color = "white";
+  input.style.font = "16px sans-serif";
+  input.style.border = "none";
+  input.style.outline = "none";
+  input.style.zIndex = "10";
+
+  document.body.appendChild(input);
+  input.focus();
+
+  const onEnter = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      const value = input.value.trim();
+      if (value) {
+        const shape = {
+          type: "text",
+          x,
+          y: y + 16, 
+          content: value
+        } as Shape;
+
+        this.existingShapes.push(shape);
+        this.clearCanvas();
+
+        this.socket.send(JSON.stringify({
+          type: "chat",
+          message: JSON.stringify({ shape }),
+          roomId: this.roomId,
+        }));
+      }
+
+      input.remove();
+      input.removeEventListener("keydown", onEnter);
+    }
+  };
+
+  input.addEventListener("keydown", onEnter);
+}
+
+
   mouseDownHandler = (e: { clientX: number; clientY: number; }) => {
     this.clicked = true;
     this.startX = e.clientX;
     this.startY = e.clientY;
+
+      if (this.selectedTool === "text") {
+    this.createTextInput(e.clientX, e.clientY);
+    return;
+  }
 
     if (this.selectedTool === "pencil") {
       this.lastX = e.clientX;
@@ -263,7 +322,7 @@ export class Game {
                  currentY >= shape.y - eraserRadius &&
                  currentY <= shape.y + shape.height + eraserRadius;
         } else if (shape.type === "line") {
-        
+          // Approximate point-to-line distance
           const { startX, startY, endX, endY } = shape;
           const A = currentX - startX;
           const B = currentY - startY;
