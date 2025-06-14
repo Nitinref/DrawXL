@@ -1,4 +1,6 @@
+
 "use client";
+
 import { Tool } from "@/components/Canvas";
 import { getExistingShapes } from "./http";
 
@@ -105,11 +107,11 @@ export class Game {
 
  clearCanvas() {
   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  this.ctx.fillStyle = "rgba(0, 0, 0)";
+  this.ctx.fillStyle = "rgba(255,255,255)";
   this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
   this.existingShapes.forEach((shape) => {
-    this.ctx.strokeStyle = "rgba(255, 255, 255)";
+    this.ctx.strokeStyle = "rgba(0,0,0)";
     if (shape.type === "rect") {
       this.ctx.strokeRect(
         shape.x + this.offsetX,
@@ -135,7 +137,7 @@ export class Game {
       this.ctx.stroke();
       this.ctx.closePath();
     } else if (shape.type === "text") {
-      this.ctx.fillStyle = "white";
+      this.ctx.fillStyle = "black";
       this.ctx.font = "16px sans-serif";
       this.ctx.fillText(shape.content, shape.x + this.offsetX, shape.y + this.offsetY);
     }
@@ -153,7 +155,7 @@ export class Game {
     input.style.left = `${x}px`;
     input.style.top = `${y}px`;
     input.style.background = "transparent";
-    input.style.color = "white";
+    input.style.color = "black";
     input.style.font = "16px sans-serif";
     input.style.border = "none";
     input.style.outline = "none";
@@ -283,7 +285,7 @@ export class Game {
     const height = e.clientY - this.startY;
 
     this.clearCanvas();
-    this.ctx.strokeStyle = "rgba(255, 255, 255)";
+    this.ctx.strokeStyle = "rgba(0,0,0)";
     if (this.selectedTool === "pan" && this.isDragging) {
       this.offsetX = e.clientX - this.dragStartX;
       this.offsetY = e.clientY - this.dragStartY;
@@ -408,4 +410,4 @@ export class Game {
     this.canvas.addEventListener("mouseup", this.mouseUpHandler);
     this.canvas.addEventListener("mousemove", this.mouseMoveHandler);
   }
-}
+}  

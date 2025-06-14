@@ -9,6 +9,7 @@ import Link from "next/link"
 export default function JoinRoom() {
     const [rooms, setRooms] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
+    const [joiningRoomId, setJoiningRoomId] = useState<string | null>(null)
     const router = useRouter()
 
     useEffect(() => {
@@ -99,7 +100,7 @@ export default function JoinRoom() {
                                 Create your first room to get started with collaborative drawing!
                             </p>
                             <Link href="/room">
-                                <button className="bg-black text-white px-6 py-3 rounded-full font-medium hover:bg-gray-800 transition-all">
+                                <button className="bg-black text-white px-6 py-3 rounded-full font-medium hover:bg-gray-800 transition-all cursor-pointer">
                                     Create New Room
                                 </button>
                             </Link>
@@ -118,7 +119,7 @@ export default function JoinRoom() {
                                                     <div className="bg-black text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                                                         {index + 1}
                                                     </div>
-                                                    <h3 className="text-lg font-bold text-gray-900">{room.slug}`</h3>
+                                                    <h3 className="text-lg font-bold text-gray-900">{room.slug}</h3>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-gray-500">
                                                     <Users className="h-4 w-4" />
@@ -126,11 +127,29 @@ export default function JoinRoom() {
                                                 </div>
                                             </div>
                                             <button
-                                                className="bg-black text-white px-6 py-3 rounded-full font-medium hover:bg-gray-800 transition-all flex items-center gap-2"
-                                                onClick={() => router.push(`/canvas/${room.id}`)}
+                                                className={`px-6 py-3 rounded-full font-medium transition-all flex items-center gap-2 ${
+                                                    joiningRoomId === room.id
+                                                        ? "bg-black text-white cursor-wait"
+                                                        : "bg-black text-white hover:bg-gray-800 cursor-pointer"
+                                                }`}
+                                                disabled={joiningRoomId === room.id}
+                                                onClick={async () => {
+                                                    setJoiningRoomId(room.id)
+                                                    try {
+                                                        router.push(`/canvas/${room.id}`)
+                                                    } finally {
+                                                        setJoiningRoomId(null)
+                                                    }
+                                                }}
                                             >
-                                                Join
-                                                <ArrowRight className="h-4 w-4" />
+                                                {joiningRoomId === room.id ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        Join
+                                                        <ArrowRight className="h-4 w-4" />
+                                                    </>
+                                                )}
                                             </button>
                                         </div>
                                     </div>
@@ -150,7 +169,7 @@ export default function JoinRoom() {
                         Create a new collaborative space and invite others to join your creative session.
                     </p>
                     <Link href="/room">
-                        <button className="bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all flex items-center gap-3 mx-auto">
+                        <button className="bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all flex items-center gap-3 mx-auto cursor-pointer">
                             <Plus className="h-5 w-5" />
                             Create New Room
                         </button>

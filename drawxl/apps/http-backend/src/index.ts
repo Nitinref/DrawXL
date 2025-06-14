@@ -143,32 +143,6 @@ app.get("/chats/:roomId", async (req, res) => {
 })
 
 
-app.post("/chat", middleware, async (req, res) => {
-    const { roomId, message } = req.body;
-    // @ts-ignore
-    const userId = req.userId;
-
-    try {
-        const chat = await Client.chat.create({
-            data: {
-                roomId,
-                userId,
-                message
-            }
-        });
-
-        res.json({
-            chatId: chat.id,
-            message: "Chat created successfully"
-        });
-    } catch (e) {
-        res.status(500).json({
-            message: "Failed to create chat"
-        });
-    }
-});
-
-
 app.get("/room/:slug", async (req, res) => {
     const slug = req.params.slug;
     const room = await Client.room.findFirst({

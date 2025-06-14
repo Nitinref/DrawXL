@@ -102,7 +102,7 @@ wss.on("connection", function connection(ws, request) {
 
         if (parsedData.type === "erase") {
             const roomId = parsedData.roomId;
-            const eraseData = parsedData.message; // { x, y } or custom format
+            const eraseData = parsedData.message; 
 
             users.forEach(user => {
                 if (user.rooms.includes(roomId)) {

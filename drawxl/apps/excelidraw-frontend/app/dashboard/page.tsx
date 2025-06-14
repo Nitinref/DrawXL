@@ -1,9 +1,29 @@
+"use client";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Pencil, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Pencil, ArrowRight, Loader2 } from "lucide-react";
 import Card from "../Card";
 
 export default function Home() {
+  const [loading, setLoading] = useState<"create" | "join" | null>(null);
+  const router = useRouter();
+
+  const handleCreate = () => {
+    setLoading("create");
+    setTimeout(() => {
+      router.push("/room");
+    }, 1000); // simulate loading or await API
+  };
+
+  const handleJoin = () => {
+    setLoading("join");
+    setTimeout(() => {
+      router.push("/JoinRoom");
+    }, 1000); // simulate loading
+  };
+
   return (
     <div className="bg-white min-h-screen w-full">
       {/* Navbar */}
@@ -21,7 +41,6 @@ export default function Home() {
           <Link href="#Aboutus" className="text-black text-lg hover:text-xl duration-300">Aboutus</Link>
           <Link href="#contact" className="text-black text-lg hover:text-xl duration-300">Contact</Link>
         </div>
-
       </div>
 
       {/* Hero Section */}
@@ -39,16 +58,32 @@ export default function Home() {
             The ultimate drawing application that transforms your ideas into stunning digital art with professional tools and intuitive controls.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            <Link href="/room" className="h-[55px] sm:h-[60px] w-full sm:w-[250px] bg-black rounded-xl flex items-center justify-center hover:bg-gray-800 transition text-white text-xl sm:text-2xl font-semibold">
-              Create Room
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-            <div className="h-[55px] sm:h-[60px] w-full sm:w-[250px] border rounded-xl flex items-center justify-center bg-white text-xl sm:text-2xl text-black font-semibold cursor-pointer">
-              <Link href="/JoinRoom" >
-               Join Room
-              </Link>
-             
-            </div>
+            <button
+              onClick={handleCreate}
+              className="h-[55px] sm:h-[60px] w-full sm:w-[250px] bg-black rounded-xl flex items-center justify-center hover:bg-gray-800 transition text-white text-xl sm:text-2xl font-semibold cursor-pointer"
+              disabled={loading !== null}
+            >
+              {loading === "create" ? (
+                <Loader2 className="animate-spin h-5 w-5" />
+              ) : (
+                <>
+                  Create Room
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={handleJoin}
+              className="h-[55px] sm:h-[60px] w-full sm:w-[250px] border rounded-xl flex items-center justify-center bg-white text-xl sm:text-2xl text-black font-semibold cursor-pointer"
+              disabled={loading !== null}
+            >
+              {loading === "join" ? (
+                <Loader2 className="animate-spin h-5 w-5" />
+              ) : (
+                "Join Room"
+              )}
+            </button>
           </div>
         </div>
 
