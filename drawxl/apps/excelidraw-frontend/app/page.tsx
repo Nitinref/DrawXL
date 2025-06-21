@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Pencil, ArrowRight } from "lucide-react";
 import Signup from "./Signup";
 import Signin from "./Signin";
 import Card from "./Card";
-
+import Image from 'next/image';
 export default function Home() {
   return (
     <div className="bg-white min-h-screen w-full">
@@ -61,13 +60,16 @@ export default function Home() {
         </div>
 
         {/* Right */}
-        <div className="flex justify-center items-center">
-          <img
-            src="/drawxl.png"
-            alt="Drawing Hero"
-            className="rounded-xl shadow-xl w-[90%] max-w-[500px] lg:max-w-[600px] h-auto"
-          />
-        </div>
+       <div className="flex justify-center items-center">
+  <Image
+    src="/drawxl.png"
+    alt="Drawing Hero"
+    width={600}  // Set to your desired display width
+    height={400} // Set to your desired display height
+    className="rounded-xl shadow-xl w-[90%] max-w-[500px] lg:max-w-[600px] h-auto"
+    priority={true} // Optional: if this is above-the-fold hero image
+  />
+</div>
       </div>
 
       {/* Feature Highlight */}
