@@ -43,7 +43,8 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
             }
         } catch (err) {
             setError(
-              // @ts-ignore
+              // @ts-expect-error
+
                 err.response?.data?.message || 
                 (isSignin ? "Invalid credentials" : "Registration failed")
             );

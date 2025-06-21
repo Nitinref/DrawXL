@@ -1,11 +1,10 @@
-import { initDraw } from "@/draw"
-import { Socket } from "dgram";
+
 import { useEffect, useState } from "react"
 import { useRef } from "react";
 import { IconButton } from "./IconButton";
-import { MoveRight, Baseline, Circle, Eraser, LucideCheckLine, LucideLineChart, LucidePencilLine, MessageSquareText, Minus, Pencil, PencilIcon, RectangleHorizontal, Text, Hand, Sun } from "lucide-react";
+import { MoveRight, Baseline, Circle, Eraser, Minus, PencilIcon, RectangleHorizontal,  Hand,  } from "lucide-react";
 import { Game } from "@/draw/Game";
-import { Linefont } from "next/font/google";
+
 
 
 export type Tool = "circle" | "rect" | "pencil" | "eraser" | "text" | "line" | "moveright" | "pan"|"sun";
@@ -24,7 +23,8 @@ export function Canvas({
 
 
     useEffect(() => {
-        // @ts-ignore
+        // @ts-expect-error
+
         game?.setTool(selectedTool)
     }, [selectedTool, game])
 

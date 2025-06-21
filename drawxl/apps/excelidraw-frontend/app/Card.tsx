@@ -1,4 +1,4 @@
-import { Pencil, ArrowRight ,Zap ,Brush ,Users } from "lucide-react";
+import { Zap ,Brush ,Users } from "lucide-react";
 
 export default function Card(){
 

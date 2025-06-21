@@ -14,6 +14,7 @@ export default function JoinRoom() {
 
     useEffect(() => {
         fetchRooms()
+        //   // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     async function fetchRooms() {
