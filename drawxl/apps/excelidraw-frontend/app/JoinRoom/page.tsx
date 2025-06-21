@@ -6,15 +6,22 @@ import { Pencil, ArrowRight, Users, Plus, RefreshCw, Loader2 } from "lucide-reac
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
+type Room = {
+  id: string;
+  slug: string;
+  users?: { id: string; name: string }[];
+};
+
 export default function JoinRoom() {
-    const [rooms, setRooms] = useState<any[]>([])
+    const [rooms, setRooms] = useState<Room[]>([])
     const [loading, setLoading] = useState(true)
     const [joiningRoomId, setJoiningRoomId] = useState<string | null>(null)
     const router = useRouter()
 
+    
     useEffect(() => {
         fetchRooms()
-        //   // eslint-disable-next-line react-hooks/exhaustive-deps
+     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     async function fetchRooms() {

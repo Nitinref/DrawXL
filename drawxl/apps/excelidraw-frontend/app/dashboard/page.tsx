@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from 'next/image';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Pencil, ArrowRight, Loader2 } from "lucide-react";
@@ -88,10 +89,13 @@ export default function Home() {
 
         {/* Right */}
         <div className="flex justify-center items-center">
-          <img
+          <Image
             src="/drawxl.png"
             alt="Drawing Hero"
             className="rounded-xl shadow-xl w-[90%] max-w-[500px] lg:max-w-[600px] h-auto"
+            width={600}  // Set the intrinsic width
+            height={400} // Set the intrinsic height
+            priority    // Optional: if this is above-the-fold image
           />
         </div>
       </div>

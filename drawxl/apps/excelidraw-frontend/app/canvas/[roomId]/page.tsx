@@ -1,18 +1,19 @@
-"use client"
+"use client";
 
 import { RoomCanvas } from "@/components/RoomCanvas";
 
+export default function Canvas({
+  params,
+}: {
+  params: {
+    roomId: string;
+  };
+}) {
+  const roomId = params.roomId; // No need for await
 
-export default async function Canvas({params}:{
-    params:{
-        roomId:string
-    }
-}){
-    const roomId = (await params).roomId;
-
-    return(
-        <div>
-            <RoomCanvas roomId={roomId}/>
-        </div>
-    )
+  return (
+    <div>
+      <RoomCanvas roomId={roomId} />
+    </div>
+  );
 }
